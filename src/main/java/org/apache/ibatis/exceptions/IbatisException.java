@@ -21,6 +21,9 @@ package org.apache.ibatis.exceptions;
 @Deprecated
 public class IbatisException extends RuntimeException {
 
+  // @deprecated 标记该类为已弃用，不建议使用。主要原因是这个本身只是一个
+  // RuntimeException的继承类，给后续PersistenceException类进行继承
+  // 但实际上对让其直接继承RuntimeException即可，不需要再继承这个类
   // 序列化标志。因为它是Throwable的子类，Throwable是可序列化的。
   private static final long serialVersionUID = 3880206998166270511L;
 

@@ -42,6 +42,7 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
 
   @Override
   public <T> T create(Class<T> type) {
+    // 链式函数，直接使用有参方法构造对象，指定类型和参数列表为null
     return create(type, null, null);
   }
 
@@ -66,6 +67,9 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
     try {
       // 构造方法
       Constructor<T> constructor;
+      // todo 这部分应该也有合并代码的优化空间，比如我传入的是一个空列表，那么这里是不是可以合并成一个分支
+      // todo 而且这种情况下是不是也是无参构造呢?
+      // 无参创建
       if (constructorArgTypes == null || constructorArgs == null) { // 参数类型列表为null或者参数列表为null
         // 因此获取无参构造函数
         constructor = type.getDeclaredConstructor();
@@ -83,7 +87,7 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
         }
       }
 
-      // 根据入参类型查找对应的构造器
+      // 根据入参类型查找对应的构造器，有参创建
       constructor = type.getDeclaredConstructor(constructorArgTypes.toArray(new Class[constructorArgTypes.size()]));
       try {
         // 采用有参构造函数创建实例
@@ -110,6 +114,8 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
 
   // 判断要创建的目标对象的类型，即如果传入的是接口则给出它的一种实现
   protected Class<?> resolveInterface(Class<?> type) {
+    // 这里可以利用多态替换，但是这里没有实现，直接返回类型本身
+    // 我理解多态这个成本应该有些高，也没有必要，现在这个单纯是创建对象，没必要做多态替换
     Class<?> classToCreate;
     if (type == List.class || type == Collection.class || type == Iterable.class) {
       classToCreate = ArrayList.class;
