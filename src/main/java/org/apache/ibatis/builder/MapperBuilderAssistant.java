@@ -137,6 +137,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
       }
       // 修改当前缓存为其他namespace的缓存，从而实现缓存共享
       currentCache = cache;
+      // 重置为false
       unresolvedCacheRef = false;
       return cache;
     } catch (IllegalArgumentException e) {
@@ -179,6 +180,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
   public ParameterMap addParameterMap(String id, Class<?> parameterClass, List<ParameterMapping> parameterMappings) {
     id = applyCurrentNamespace(id, false);
     ParameterMap parameterMap = new ParameterMap.Builder(configuration, id, parameterClass, parameterMappings).build();
+    // 添加到配置中
     configuration.addParameterMap(parameterMap);
     return parameterMap;
   }
@@ -314,13 +316,16 @@ public class MapperBuilderAssistant extends BaseBuilder {
       LanguageDriver lang,
       String resultSets) {
 
+    // 解析缓存引用
     if (unresolvedCacheRef) {
       throw new IncompleteElementException("Cache-ref not yet resolved");
     }
 
+    // 最近的NameSpace
     id = applyCurrentNamespace(id, false);
     boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
 
+    // 创建MappedStatement对象
     MappedStatement.Builder statementBuilder = new MappedStatement.Builder(configuration, id, sqlSource, sqlCommandType)
         .resource(resource)
         .fetchSize(fetchSize)
@@ -339,11 +344,13 @@ public class MapperBuilderAssistant extends BaseBuilder {
         .useCache(valueOrDefault(useCache, isSelect))
         .cache(currentCache);
 
+    // 创建参数映射
     ParameterMap statementParameterMap = getStatementParameterMap(parameterMap, parameterType, id);
     if (statementParameterMap != null) {
       statementBuilder.parameterMap(statementParameterMap);
     }
 
+    // 创建MappedStatement对象
     MappedStatement statement = statementBuilder.build();
     configuration.addMappedStatement(statement);
     return statement;
@@ -419,14 +426,18 @@ public class MapperBuilderAssistant extends BaseBuilder {
       String resultSet,
       String foreignColumn,
       boolean lazy) {
+    // 解析 Java 类型，根据结果类型、属性名和指定类型确定最终类型
     Class<?> javaTypeClass = resolveResultJavaType(resultType, property, javaType);
+    // 解析类型处理器实例
     TypeHandler<?> typeHandlerInstance = resolveTypeHandler(javaTypeClass, typeHandler);
     List<ResultMapping> composites;
+    // 判断是否为复合映射（存在嵌套查询或外键列）
     if ((nestedSelect == null || nestedSelect.isEmpty()) && (foreignColumn == null || foreignColumn.isEmpty())) {
       composites = Collections.emptyList();
     } else {
       composites = parseCompositeColumnName(column);
     }
+    // 构建 ResultMapping 对象
     return new ResultMapping.Builder(configuration, property, column, javaTypeClass)
         .jdbcType(jdbcType)
         .nestedQueryId(applyCurrentNamespace(nestedSelect, true))
@@ -460,11 +471,14 @@ public class MapperBuilderAssistant extends BaseBuilder {
 
   private List<ResultMapping> parseCompositeColumnName(String columnName) {
     List<ResultMapping> composites = new ArrayList<>();
+    // 检查是否为复合列名格式（包含等号或逗号）
     if (columnName != null && (columnName.indexOf('=') > -1 || columnName.indexOf(',') > -1)) {
+      // 使用StringTokenizer解析columnName，分隔符为{}=和空格
       StringTokenizer parser = new StringTokenizer(columnName, "{}=, ", false);
       while (parser.hasMoreTokens()) {
-        String property = parser.nextToken();
-        String column = parser.nextToken();
+        String property = parser.nextToken(); // 获取属性名
+        String column = parser.nextToken();   // 获取列名
+        // 构建ResultMapping对象，使用未知类型处理器
         ResultMapping complexResultMapping = new ResultMapping.Builder(
             configuration, property, column, configuration.getTypeHandlerRegistry().getUnknownTypeHandler()).build();
         composites.add(complexResultMapping);

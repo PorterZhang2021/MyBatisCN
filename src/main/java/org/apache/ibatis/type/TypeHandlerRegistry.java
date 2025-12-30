@@ -61,11 +61,14 @@ public final class TypeHandlerRegistry {
   private final TypeHandler<Object> unknownTypeHandler = new UnknownTypeHandler(this);
   // 键为typeHandler.getClass() ，值为typeHandler。里面存储了所有的类型处理器
   private final Map<Class<?>, TypeHandler<?>> allTypeHandlersMap = new HashMap<>();
-  // 空的Map<JdbcType, TypeHandler<?>>，表示该Javal类型没有对应的Map<JdbcType, TypeHandler<?>>
+  // 空的Map<JdbcType, TypeHandler<?>>，表示该Java类型没有对应的Map<JdbcType, TypeHandler<?>>
   private static final Map<JdbcType, TypeHandler<?>> NULL_TYPE_HANDLER_MAP = Collections.emptyMap();
   // 默认的枚举类型处理器
   private Class<? extends TypeHandler> defaultEnumTypeHandler = EnumTypeHandler.class;
 
+  // 该部分将对应的TypeHandler注册到对应的Map中
+  // 主要是把JDBC自身的和Java自身的类型注册到对应的Map中
+  // 后续通过对应的处理器来进行处理，这部分用的是利用工厂来替换多分支的写法
   public TypeHandlerRegistry() {
     register(Boolean.class, new BooleanTypeHandler());
     register(boolean.class, new BooleanTypeHandler());
@@ -223,6 +226,9 @@ public final class TypeHandlerRegistry {
    * @param jdbcType JDBC类型
    * @param <T> 类型处理器的目标类型
    * @return 类型处理器
+   * 我理解这部分应该也可以优化做一层包裹，然后传入之后
+   * 就不是原生类型了，这个时候就统一了，不需要考虑
+   * Type或者JdbcType
    */
   @SuppressWarnings("unchecked")
   private <T> TypeHandler<T> getTypeHandler(Type type, JdbcType jdbcType) {
@@ -330,6 +336,7 @@ public final class TypeHandlerRegistry {
   }
 
   public void register(JdbcType jdbcType, TypeHandler<?> handler) {
+    // 这里直接走的是jdbcTypeHandlerMap
     jdbcTypeHandlerMap.put(jdbcType, handler);
   }
 
@@ -367,24 +374,31 @@ public final class TypeHandlerRegistry {
   // java type + handler
 
   public <T> void register(Class<T> javaType, TypeHandler<? extends T> typeHandler) {
+    // 这里看着直接注册了JavaType，其他Jdbc的Type都转换成了(Type)
+    // 看着这部分JDBC应该是继承了对应的接口？
     register((Type) javaType, typeHandler);
   }
 
   private <T> void register(Type javaType, TypeHandler<? extends T> typeHandler) {
+    // 检查类型处理器是否有@MappedJdbcTypes注解
     MappedJdbcTypes mappedJdbcTypes = typeHandler.getClass().getAnnotation(MappedJdbcTypes.class);
     if (mappedJdbcTypes != null) {
+      // 为注解中指定的每个JdbcType注册处理器
       for (JdbcType handledJdbcType : mappedJdbcTypes.value()) {
         register(javaType, handledJdbcType, typeHandler);
       }
+      // 如果需要处理null JdbcType的情况
       if (mappedJdbcTypes.includeNullJdbcType()) {
         register(javaType, null, typeHandler);
       }
     } else {
+      // 没有@MappedJdbcTypes注解时，默认注册为处理null JdbcType
       register(javaType, null, typeHandler);
     }
   }
 
   public <T> void register(TypeReference<T> javaTypeReference, TypeHandler<? extends T> handler) {
+    // 这里看着是会从TypeReference中获取到原始的Type类型
     register(javaTypeReference.getRawType(), handler);
   }
 
@@ -395,6 +409,7 @@ public final class TypeHandlerRegistry {
   }
 
   private void register(Type javaType, JdbcType jdbcType, TypeHandler<?> handler) {
+    // 如果javaType不为空，则将jdbcType和handler放入typeHandlerMap中
     if (javaType != null) {
       Map<JdbcType, TypeHandler<?>> map = typeHandlerMap.get(javaType);
       if (map == null || map == NULL_TYPE_HANDLER_MAP) {
@@ -446,8 +461,10 @@ public final class TypeHandlerRegistry {
 
   @SuppressWarnings("unchecked")
   public <T> TypeHandler<T> getInstance(Class<?> javaTypeClass, Class<?> typeHandlerClass) {
+    // 如果javaTypeClass不为空，则尝试使用javaTypeClass作为参数来创建TypeHandler的实例
     if (javaTypeClass != null) {
       try {
+        // 尝试使用javaTypeClass作为参数来创建TypeHandler的实例
         Constructor<?> c = typeHandlerClass.getConstructor(Class.class);
         return (TypeHandler<T>) c.newInstance(javaTypeClass);
       } catch (NoSuchMethodException ignored) {
@@ -457,6 +474,7 @@ public final class TypeHandlerRegistry {
       }
     }
     try {
+      // 如果没有找到匹配的构造函数，则尝试使用无参构造函数来创建TypeHandler的实例
       Constructor<?> c = typeHandlerClass.getConstructor();
       return (TypeHandler<T>) c.newInstance();
     } catch (Exception e) {

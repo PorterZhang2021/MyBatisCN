@@ -58,6 +58,7 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
         throw new TypeException("JDBC requires that the JdbcType must be specified for all nullable parameters.");
       }
       try {
+        // 存放对应的SQL字段的类型
         ps.setNull(i, jdbcType.TYPE_CODE);
       } catch (SQLException e) {
         throw new TypeException("Error setting null for parameter #" + i + " with JdbcType " + jdbcType + " . "
@@ -66,6 +67,7 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
       }
     } else {
       try {
+        // 具体的参数计算工具，因为这里设计到类型转换，所以需要具体实现
         setNonNullParameter(ps, i, parameter, jdbcType);
       } catch (Exception e) {
         throw new TypeException("Error setting non null for parameter #" + i + " with JdbcType " + jdbcType + " . "
@@ -85,6 +87,7 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
   @Override
   public T getResult(ResultSet rs, String columnName) throws SQLException {
     try {
+      // 从结果集中读取可为null的结果集，该部分为抽象实现，具体实现由子类完成
       return getNullableResult(rs, columnName);
     } catch (Exception e) {
       throw new ResultMapException("Error attempting to get column '" + columnName + "' from result set.  Cause: " + e, e);
@@ -94,6 +97,7 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
   @Override
   public T getResult(ResultSet rs, int columnIndex) throws SQLException {
     try {
+      // 从结果集中读取可为null的结果集，该部分为抽象实现，具体实现由子类完成
       return getNullableResult(rs, columnIndex);
     } catch (Exception e) {
       throw new ResultMapException("Error attempting to get column #" + columnIndex + " from result set.  Cause: " + e, e);
@@ -103,6 +107,7 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
   @Override
   public T getResult(CallableStatement cs, int columnIndex) throws SQLException {
     try {
+      // 从结果集中读取可为null的结果集，该部分为抽象实现，具体实现由子类完成
       return getNullableResult(cs, columnIndex);
     } catch (Exception e) {
       throw new ResultMapException("Error attempting to get column #" + columnIndex + " from callable statement.  Cause: " + e, e);
@@ -113,6 +118,7 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
 
   /**
    * @param columnName Colunm name, when configuration <code>useColumnLabel</code> is <code>false</code>
+   * 如果没有值的情况下，就是给null
    */
   public abstract T getNullableResult(ResultSet rs, String columnName) throws SQLException;
 

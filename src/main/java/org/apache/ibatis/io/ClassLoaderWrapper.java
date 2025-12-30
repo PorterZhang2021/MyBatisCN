@@ -22,6 +22,7 @@ import java.net.URL;
  * A class to wrap access to multiple class loaders making them work as one
  *
  * @author Clinton Begin
+ * 类加载器包装类，用于从多个类加载器中加载类
  */
 public class ClassLoaderWrapper {
 
@@ -30,6 +31,7 @@ public class ClassLoaderWrapper {
 
   ClassLoaderWrapper() {
     try {
+      // 看着这里，获取系统类加载器
       systemClassLoader = ClassLoader.getSystemClassLoader();
     } catch (SecurityException ignored) {
       // AccessControlException on Google App Engine
@@ -54,6 +56,7 @@ public class ClassLoaderWrapper {
    * @return the stream or null
    */
   public URL getResourceAsURL(String resource, ClassLoader classLoader) {
+    // 获取资源URL
     return getResourceAsURL(resource, getClassLoaders(classLoader));
   }
 
@@ -75,6 +78,7 @@ public class ClassLoaderWrapper {
    * @return the stream or null
    */
   public InputStream getResourceAsStream(String resource, ClassLoader classLoader) {
+    // 获取资源流
     return getResourceAsStream(resource, getClassLoaders(classLoader));
   }
 
@@ -208,6 +212,13 @@ public class ClassLoaderWrapper {
    * @return 所有类加载器的列表
    */
   ClassLoader[] getClassLoaders(ClassLoader classLoader) {
+    /**
+     * 作为参数传入的类加载器，可能为null
+     * 系统默认的类加载其，如未设置未null
+     * 当前线程的线程上下文中的类加载器
+     * 当前对象的类加载器
+     * 系统类加载器，在ClassLoaderWrapper的构造方法中设置
+     */
     return new ClassLoader[]{
         classLoader,
         defaultClassLoader,

@@ -36,6 +36,12 @@ public class ExceptionUtil {
     // 该变量用以存放拆包得到的异常
     Throwable unwrapped = wrapped;
     while (true) {
+      // 这部分是因为InvocationTargetException和UndeclaredThrowableException是包装异常，
+      // 为Java.lang.reflect包下的异常，所以这里判断是否是这两个异常类型
+      // 如果内部异常是这两个异常类型，则继续拆包，直到拆包到非这两个异常类型为止
+      // 为什么这样设计呢？是因为Java.lang.reflect想要进行异常统一，所以把
+      // InvocationTargetException和UndeclaredThrowableException作为包装起来了，
+      // 而我们这里本身也是做reflection相关的功能，所以这里需要拆包，把异常抛出
       if (unwrapped instanceof InvocationTargetException) {
         // 拆包获得内部异常
         unwrapped = ((InvocationTargetException) unwrapped).getTargetException();

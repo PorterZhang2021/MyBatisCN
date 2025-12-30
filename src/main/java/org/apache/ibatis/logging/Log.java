@@ -17,6 +17,8 @@ package org.apache.ibatis.logging;
 
 /**
  * @author Clinton Begin
+ * 这个log看着像是支持多种类型，jdk14，log4j, slf4j, commons logging等
+ * 这里就是适配器模式使用的最好见证，其适配了多种日志框架，因此内部不需要进行更改，只需要替换掉对应的实现类即可
  */
 public interface Log {
 

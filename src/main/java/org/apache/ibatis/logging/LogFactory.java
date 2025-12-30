@@ -20,6 +20,8 @@ import java.lang.reflect.Constructor;
 /**
  * @author Clinton Begin
  * @author Eduardo Macarron
+ * 对于对应的适配期，这里会构建一个日志实例工厂，创建对应能够使用的日志实例
+ * 对应的日志工厂
  */
 public final class LogFactory {
 
@@ -31,6 +33,7 @@ public final class LogFactory {
   private static Constructor<? extends Log> logConstructor;
 
   static {
+    // 需要注意的是这里都是依此尝试创建，而不是确保能够创建成功
     tryImplementation(LogFactory::useSlf4jLogging);
     tryImplementation(LogFactory::useCommonsLogging);
     tryImplementation(LogFactory::useLog4J2Logging);
@@ -49,17 +52,24 @@ public final class LogFactory {
 
   public static Log getLog(String logger) {
     try {
+      // 创建日志实例
       return logConstructor.newInstance(logger);
     } catch (Throwable t) {
       throw new LogException("Error creating logger for logger " + logger + ".  Cause: " + t, t);
     }
   }
 
+
+  // 设置日志实现类，这里是自定义日志实现类，我们可以传入我们的实现
+  // 可以发现这部分内容是有synchronized关键字，保证线程安全
   public static synchronized void useCustomLogging(Class<? extends Log> clazz) {
+    //  为什么这部分需要加锁？是不是为了防止多线程的情况下创建多个实例？
+    // 看了一下上面的static部分，好像是设置了单例？
     setImplementation(clazz);
   }
 
   public static synchronized void useSlf4jLogging() {
+    // 这里就是对应的slf4j日志实现类
     setImplementation(org.apache.ibatis.logging.slf4j.Slf4jImpl.class);
   }
 
@@ -95,6 +105,7 @@ public final class LogFactory {
   private static void tryImplementation(Runnable runnable) {
     if (logConstructor == null) {
       try {
+        // 执行尝试实现日志实例的操作， 看着是一个线程任务在run
         runnable.run();
       } catch (Throwable t) {
         // ignore

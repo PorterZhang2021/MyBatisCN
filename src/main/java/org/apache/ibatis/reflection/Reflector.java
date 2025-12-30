@@ -44,6 +44,7 @@ import org.apache.ibatis.reflection.property.PropertyNamer;
  * allows for easy mapping between property names and getter/setter methods.
  *
  * @author Clinton Begin
+ * 反射器，用于缓存类定义信息，方便属性名和getter/setter方法的映射
  */
 public class Reflector {
 
@@ -96,7 +97,7 @@ public class Reflector {
 
   private void addDefaultConstructor(Class<?> clazz) {
     Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-    // 无参构造函数即为默认构造函数
+    // 无参构造函数即为默认构造函数 也就是说这里我们构造的时候会优先选择无参构造函数
     Arrays.stream(constructors).filter(constructor -> constructor.getParameterTypes().length == 0)
       .findAny().ifPresent(constructor -> this.defaultConstructor = constructor);
   }
@@ -173,6 +174,7 @@ public class Reflector {
   }
 
   private void addSetMethods(Class<?> clazz) {
+    // 存储属性的set方法。Map的键为属性名，值为set方法列表。某个属性的set方法用列表存储是因为前期可能会为某一个属性找到多个可能set方法。
     Map<String, List<Method>> conflictingSetters = new HashMap<>();
     Method[] methods = getClassMethods(clazz);
     Arrays.stream(methods).filter(m -> m.getParameterTypes().length == 1 && PropertyNamer.isSetter(m.getName()))
@@ -251,6 +253,7 @@ public class Reflector {
   }
 
   private Class<?> typeToClass(Type src) {
+    // 将Type转换为Class<?>
     Class<?> result = null;
     if (src instanceof Class) {
       result = (Class<?>) src;
@@ -272,6 +275,7 @@ public class Reflector {
   }
 
   private void addFields(Class<?> clazz) {
+    // 添加字段
     Field[] fields = clazz.getDeclaredFields();
     for (Field field : fields) {
       if (!setMethods.containsKey(field.getName())) {
@@ -312,6 +316,7 @@ public class Reflector {
   }
 
   private boolean isValidPropertyName(String name) {
+    // 验证属性名，排除一些特别的设定
     return !(name.startsWith("$") || "serialVersionUID".equals(name) || "class".equals(name));
   }
 
@@ -360,6 +365,7 @@ public class Reflector {
   }
 
   private String getSignature(Method method) {
+    // 获取方法的签名，包括返回值类型和参数类型
     StringBuilder sb = new StringBuilder();
     Class<?> returnType = method.getReturnType();
     if (returnType != null) {
@@ -462,6 +468,7 @@ public class Reflector {
    * @return The array
    */
   public String[] getGetablePropertyNames() {
+    //  能够读的属性列表，即有get方法的属性列表
     return readablePropertyNames;
   }
 
@@ -495,6 +502,7 @@ public class Reflector {
   }
 
   public String findPropertyName(String name) {
+    // 通过map找对应的属性名
     return caseInsensitivePropertyMap.get(name.toUpperCase(Locale.ENGLISH));
   }
 }

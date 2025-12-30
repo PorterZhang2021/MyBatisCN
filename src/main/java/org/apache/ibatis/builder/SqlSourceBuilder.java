@@ -93,6 +93,7 @@ public class SqlSourceBuilder extends BaseBuilder {
      */
     @Override
     public String handleToken(String content) {
+      // 每个#{}中的东西对应一个ParameterMapping。所有的#{}都放在这个list
       parameterMappings.add(buildParameterMapping(content));
       return "?";
     }
@@ -105,8 +106,10 @@ public class SqlSourceBuilder extends BaseBuilder {
     private ParameterMapping buildParameterMapping(String content) {
       // 将参数转化为map
       Map<String, String> propertiesMap = parseParameterMapping(content);
+      // 从map中取出property
       String property = propertiesMap.get("property");
       Class<?> propertyType;
+      // 从parameterType中获取propertyType
       if (metaParameters.hasGetter(property)) { // issue #448 get type from additional params
         propertyType = metaParameters.getGetterType(property);
       } else if (typeHandlerRegistry.hasTypeHandler(parameterType)) {
@@ -123,9 +126,11 @@ public class SqlSourceBuilder extends BaseBuilder {
           propertyType = Object.class;
         }
       }
+      // 构建ParameterMapping的Builder对象
       ParameterMapping.Builder builder = new ParameterMapping.Builder(configuration, property, propertyType);
       Class<?> javaType = propertyType;
       String typeHandlerAlias = null;
+      // 遍历map，将map中的内容转化为ParameterMapping的属性
       for (Map.Entry<String, String> entry : propertiesMap.entrySet()) {
         String name = entry.getKey();
         String value = entry.getValue();

@@ -60,7 +60,9 @@ public class MapperMethod {
    * @param config 配置信息Configuration
    */
   public MapperMethod(Class<?> mapperInterface, Method method, Configuration config) {
+    // 这里是不是使用了命令模式呢？
     this.command = new SqlCommand(config, mapperInterface, method);
+    // 方法签名
     this.method = new MethodSignature(config, mapperInterface, method);
   }
 
@@ -130,13 +132,18 @@ public class MapperMethod {
 
   private Object rowCountResult(int rowCount) {
     final Object result;
+    // 根据返回类型，返回不同的结果
     if (method.returnsVoid()) {
+      // 返回void类型，则返回null
       result = null;
     } else if (Integer.class.equals(method.getReturnType()) || Integer.TYPE.equals(method.getReturnType())) {
+      // 返回Integer类型，则返回int类型的rowCount
       result = rowCount;
     } else if (Long.class.equals(method.getReturnType()) || Long.TYPE.equals(method.getReturnType())) {
+      // 返回Long类型，则返回long类型的rowCount
       result = (long)rowCount;
     } else if (Boolean.class.equals(method.getReturnType()) || Boolean.TYPE.equals(method.getReturnType())) {
+      // 返回Boolean类型，则返回rowCount是否大于0
       result = rowCount > 0;
     } else {
       throw new BindingException("Mapper method '" + command.getName() + "' has an unsupported return type: " + method.getReturnType());
@@ -145,18 +152,24 @@ public class MapperMethod {
   }
 
   private void executeWithResultHandler(SqlSession sqlSession, Object[] args) {
+    // 获取当前方法的映射语句配置
     MappedStatement ms = sqlSession.getConfiguration().getMappedStatement(command.getName());
+    // 检查是否为可调用语句且返回值类型是否为void
     if (!StatementType.CALLABLE.equals(ms.getStatementType())
         && void.class.equals(ms.getResultMaps().get(0).getType())) {
       throw new BindingException("method " + command.getName()
           + " needs either a @ResultMap annotation, a @ResultType annotation,"
           + " or a resultType attribute in XML so a ResultHandler can be used as a parameter.");
     }
+    // 将方法参数转换为SQL命令参数
     Object param = method.convertArgsToSqlCommandParam(args);
+    // 根据是否有行边界条件选择不同的查询方式
     if (method.hasRowBounds()) {
       RowBounds rowBounds = method.extractRowBounds(args);
+      // 执行带行边界条件和结果处理器的查询
       sqlSession.select(command.getName(), param, rowBounds, method.extractResultHandler(args));
     } else {
+      // 执行带结果处理器的查询
       sqlSession.select(command.getName(), param, method.extractResultHandler(args));
     }
   }
@@ -356,6 +369,7 @@ public class MapperMethod {
     }
 
     public Object convertArgsToSqlCommandParam(Object[] args) {
+      // 从参数中获取对应的参数名称，并返回对应关系
       return paramNameResolver.getNamedParams(args);
     }
 

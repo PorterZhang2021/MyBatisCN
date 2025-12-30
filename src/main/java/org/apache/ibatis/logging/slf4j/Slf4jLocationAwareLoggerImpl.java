@@ -23,6 +23,7 @@ import org.slf4j.spi.LocationAwareLogger;
 
 /**
  * @author Eduardo Macarron
+ * 装饰器类，用于适配不同版本的SLF4J实现
  */
 class Slf4jLocationAwareLoggerImpl implements Log {
 

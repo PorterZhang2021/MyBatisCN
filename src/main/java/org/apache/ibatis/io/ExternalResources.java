@@ -27,6 +27,7 @@ import org.apache.ibatis.logging.LogFactory;
 
 /**
  * @author Clinton Begin
+ * 看着是一个外部资源类，用于复制外部资源文件，和获取外部资源文件的配置模板，但是看着弃用了
  */
 @Deprecated
 public class ExternalResources {

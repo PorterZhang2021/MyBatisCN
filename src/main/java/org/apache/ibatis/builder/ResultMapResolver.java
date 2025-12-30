@@ -51,6 +51,7 @@ public class ResultMapResolver {
   }
 
   public ResultMap resolve() {
+    // 添加ResultMap到配置中
     return assistant.addResultMap(this.id, this.type, this.extend, this.discriminator, this.resultMappings, this.autoMapping);
   }
 

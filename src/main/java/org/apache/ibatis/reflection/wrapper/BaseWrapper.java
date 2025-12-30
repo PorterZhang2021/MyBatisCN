@@ -24,6 +24,7 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
  * @author Clinton Begin
+ * 这个是一个抽象类，本身应该是装饰器模式，用来包装对象，提供对对象属性的访问和修改。
  */
 public abstract class BaseWrapper implements ObjectWrapper {
 
@@ -39,6 +40,7 @@ public abstract class BaseWrapper implements ObjectWrapper {
 
 
   protected Object resolveCollection(PropertyTokenizer prop, Object object) {
+    // 这里为空的情况就直接返回了，用的是PropertyTokenizer.getName()方法
     if ("".equals(prop.getName())) {
       return object;
     } else {
@@ -47,8 +49,11 @@ public abstract class BaseWrapper implements ObjectWrapper {
     }
   }
 
+  // 这个用于收集集合内的值
   protected Object getCollectionValue(PropertyTokenizer prop, Object collection) {
+    // 这里会判断是Map还是List，然后分别处理
     if (collection instanceof Map) {
+      // 这个应该是获取对应的index的值，然后返回对应的值
       return ((Map) collection).get(prop.getIndex());
     } else {
       int i = Integer.parseInt(prop.getIndex());
@@ -79,6 +84,7 @@ public abstract class BaseWrapper implements ObjectWrapper {
   }
 
   protected void setCollectionValue(PropertyTokenizer prop, Object collection, Object value) {
+    // 同样的这个是按集合类型来处理，如果是Map就put，如果是List就set，如果是数组就赋值
     if (collection instanceof Map) {
       ((Map) collection).put(prop.getIndex(), value);
     } else {

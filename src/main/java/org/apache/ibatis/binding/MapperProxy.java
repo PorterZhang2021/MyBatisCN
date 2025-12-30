@@ -71,12 +71,16 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
 
   private Object invokeDefaultMethod(Object proxy, Method method, Object[] args)
       throws Throwable {
+    // 获取MethodHandles.Lookup的构造方法，用于访问默认方法
     final Constructor<MethodHandles.Lookup> constructor = MethodHandles.Lookup.class
         .getDeclaredConstructor(Class.class, int.class);
+    // 确保构造方法可访问
     if (!constructor.isAccessible()) {
       constructor.setAccessible(true);
     }
+    // 获取方法声明的类
     final Class<?> declaringClass = method.getDeclaringClass();
+    // 创建Lookup实例并调用默认方法
     return constructor
         .newInstance(declaringClass,
             MethodHandles.Lookup.PRIVATE | MethodHandles.Lookup.PROTECTED

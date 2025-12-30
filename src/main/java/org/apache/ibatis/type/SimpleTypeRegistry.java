@@ -23,12 +23,14 @@ import java.util.Set;
 
 /**
  * @author Clinton Begin
+ * 类型注册表
  */
 public class SimpleTypeRegistry {
 
   private static final Set<Class<?>> SIMPLE_TYPE_SET = new HashSet<>();
 
   static {
+    // 这里看着是将基本类型注册到集合中
     SIMPLE_TYPE_SET.add(String.class);
     SIMPLE_TYPE_SET.add(Byte.class);
     SIMPLE_TYPE_SET.add(Short.class);
@@ -55,6 +57,7 @@ public class SimpleTypeRegistry {
    * @return True if the class is known
    */
   public static boolean isSimpleType(Class<?> clazz) {
+    // 判断集合中是否包含该类
     return SIMPLE_TYPE_SET.contains(clazz);
   }
 

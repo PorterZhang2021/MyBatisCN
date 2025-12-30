@@ -29,13 +29,18 @@ import org.apache.ibatis.logging.LogFactory;
  * A {@link VFS} implementation that works with the VFS API provided by JBoss 6.
  *
  * @author Ben Gunter
+ * // JBoss6VFS 实现了VFS接口，这里做对应的适配后就能使用了
  */
 public class JBoss6VFS extends VFS {
   private static final Log log = LogFactory.getLog(JBoss6VFS.class);
 
-  /** A class that mimics a tiny subset of the JBoss VirtualFile class. */
+  /**
+   * A class that mimics a tiny subset of the JBoss VirtualFile class.
+   * 仿照JBoss中的VirtualFile类设计的一个功能子集
+   * */
   static class VirtualFile {
     static Class<?> VirtualFile;
+    // 是不是因为这个直接反射的是JBoss6VFS的内容？
     static Method getPathNameRelativeTo, getChildrenRecursively;
 
     Object virtualFile;
@@ -69,7 +74,9 @@ public class JBoss6VFS extends VFS {
     }
   }
 
-  /** A class that mimics a tiny subset of the JBoss VFS class. */
+  /**
+   * A class that mimics a tiny subset of the JBoss VFS class.
+   * */
   // 对JBoss VFS类子集的模仿
   static class VFS {
     static Class<?> VFS;

@@ -36,6 +36,7 @@ public class ExceptionFactory {
    * @return 新的RuntimeException异常
    */
   public static RuntimeException wrapException(String message, Exception e) {
+    // 这里应该是一个异常包装类，用于包装异常信息，并返回一个新的异常，看着应该是一个简单的工厂方法
     return new PersistenceException(ErrorContext.instance().message(message).cause(e).toString(), e);
   }
 

@@ -29,6 +29,7 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 
 /**
  * @author Clinton Begin
+ * todo 元Object对象，这里和MetaClass的区别在哪儿？暂时还不太知道
  */
 public class MetaObject {
   // 原始对象
@@ -43,11 +44,17 @@ public class MetaObject {
   private final ReflectorFactory reflectorFactory;
 
   private MetaObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory, ReflectorFactory reflectorFactory) {
+    // 原始对象
     this.originalObject = object;
+    // 对象工厂
     this.objectFactory = objectFactory;
+    // 对象包装器工厂
     this.objectWrapperFactory = objectWrapperFactory;
+    // 反射工厂
     this.reflectorFactory = reflectorFactory;
 
+    // 这里判断是否有对象包装器，这里看着之前应该是有
+    // 工厂实现逻辑，但是后面代码没有实现，而是直接new对象
     if (object instanceof ObjectWrapper) {
       this.objectWrapper = (ObjectWrapper) object;
     } else if (objectWrapperFactory.hasWrapperFor(object)) {
@@ -62,9 +69,11 @@ public class MetaObject {
   }
 
   public static MetaObject forObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory, ReflectorFactory reflectorFactory) {
+    // 如果对象为空，则返回一个空对象
     if (object == null) {
       return SystemMetaObject.NULL_META_OBJECT;
     } else {
+      // 构建一个新的对象
       return new MetaObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
     }
   }
@@ -90,10 +99,12 @@ public class MetaObject {
   }
 
   public String[] getGetterNames() {
+    //  能够读的属性列表，即有get方法的属性列表
     return objectWrapper.getGetterNames();
   }
 
   public String[] getSetterNames() {
+    // 能够写的属性列表，即有set方法的属性列表
     return objectWrapper.getSetterNames();
   }
 
@@ -114,9 +125,11 @@ public class MetaObject {
   }
 
   public Object getValue(String name) {
+    // 这里看着又创建了一个新的
     PropertyTokenizer prop = new PropertyTokenizer(name);
-    // 如果还有下层属性
+    // 如果还有下层属性，这里就是用了迭代器，看是否下面还有属性
     if (prop.hasNext()) {
+      // 看着这里应该是不太一样的，这里拿的应该是index里面的属性
       MetaObject metaValue = metaObjectForProperty(prop.getIndexedName());
       if (metaValue == SystemMetaObject.NULL_META_OBJECT) {
         return null;
@@ -125,6 +138,7 @@ public class MetaObject {
         return metaValue.getValue(prop.getChildren());
       }
     } else {
+      // 如果没有了这个时候就会直接获取属性值
       return objectWrapper.get(prop);
     }
   }

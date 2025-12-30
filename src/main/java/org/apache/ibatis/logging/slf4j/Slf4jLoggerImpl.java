@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 
 /**
  * @author Eduardo Macarron
+ * 装饰器类，这里是一个不可变对象，所以new了之后应该就不能改变了
  */
 class Slf4jLoggerImpl implements Log {
 

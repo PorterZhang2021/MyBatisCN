@@ -47,7 +47,9 @@ public class TypeParameterResolver {
      *         they will be resolved to the actual runtime {@link Type}s.
      */
     public static Type resolveReturnType(Method method, Type srcType) {
+        // 返回方法的返回类型，如果是泛型，则为这次的实际类型
         Type returnType = method.getGenericReturnType();
+        // 返回其声明类型
         Class<?> declaringClass = method.getDeclaringClass();
         return resolveType(returnType, srcType, declaringClass);
     }
@@ -222,12 +224,15 @@ public class TypeParameterResolver {
         return Object.class;
     }
 
+    // 从子类出发，沿着继承链往上找，最终找到某个泛型变量（如 T）被替换成什么具体类型
     private static Type scanSuperTypes(TypeVariable<?> typeVar, Type srcType, Class<?> declaringClass, Class<?> clazz, Type superclass) {
+        // 扫描父类？
         if (superclass instanceof ParameterizedType) {
             ParameterizedType parentAsType = (ParameterizedType) superclass;
             Class<?> parentAsClass = (Class<?>) parentAsType.getRawType();
             TypeVariable<?>[] parentTypeVars = parentAsClass.getTypeParameters();
             if (srcType instanceof ParameterizedType) {
+                // 翻译父类泛型参数
                 parentAsType = translateParentTypeVars((ParameterizedType) srcType, clazz, parentAsType);
             }
             if (declaringClass == parentAsClass) {
@@ -247,9 +252,13 @@ public class TypeParameterResolver {
     }
 
     private static ParameterizedType translateParentTypeVars(ParameterizedType srcType, Class<?> srcClass, ParameterizedType parentType) {
+        // 获取实际父类参数类型
         Type[] parentTypeArgs = parentType.getActualTypeArguments();
+        // 获取当前类参数类型
         Type[] srcTypeArgs = srcType.getActualTypeArguments();
+        // 获取当前类泛型参数
         TypeVariable<?>[] srcTypeVars = srcClass.getTypeParameters();
+        // 创建新的父类参数类型
         Type[] newParentArgs = new Type[parentTypeArgs.length];
         boolean noChange = true;
         for (int i = 0; i < parentTypeArgs.length; i++) {

@@ -49,6 +49,7 @@ public class GenericTokenParser {
    *         ORDER BY `actionTime`
    */
   public String parse(String text) {
+    // 看着这个部分的解析，最终是把#{id}替换为?
     if (text == null || text.isEmpty()) {
       return "";
     }

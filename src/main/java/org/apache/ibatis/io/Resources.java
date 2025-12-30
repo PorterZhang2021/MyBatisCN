@@ -29,9 +29,11 @@ import java.util.Properties;
  * A class to simplify access to resources through the classloader.
  *
  * @author Clinton Begin
+ * 一个资源类，将资源文件可以处理成对应的Java类进行访问
  */
 public class Resources {
 
+  // 获取类加载器包装器，用于简化类加载器的访问
   private static ClassLoaderWrapper classLoaderWrapper = new ClassLoaderWrapper();
 
   /**

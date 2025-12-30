@@ -23,7 +23,7 @@ import org.apache.ibatis.reflection.Reflector;
  * @author Clinton Begin
  */
 public class GetFieldInvoker implements Invoker {
-  // 要操作的属性
+  // 要操作的属性，这里看着应该是要操作字段
   private final Field field;
 
   public GetFieldInvoker(Field field) {

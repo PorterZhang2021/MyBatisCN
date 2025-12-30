@@ -22,6 +22,7 @@ import org.apache.ibatis.reflection.ReflectionException;
 /**
  * @author Clinton Begin
  * 属性（包括属性方法）名称处理器
+ * 这个看着是对Field部分的补充，Field可能是拿到is，get，set这些方法名，然后通过反射获取属性值
  */
 public final class PropertyNamer {
 
@@ -31,6 +32,7 @@ public final class PropertyNamer {
 
   // 将方法名转化为属性名
   public static String methodToProperty(String name) {
+    // 这里是不同的名字 比如 isName getName setName
     if (name.startsWith("is")) {
       name = name.substring(2);
     } else if (name.startsWith("get") || name.startsWith("set")) {

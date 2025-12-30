@@ -32,6 +32,7 @@ import org.w3c.dom.NodeList;
 public class XNode {
 
   // org.w3c.dom.Node 表示是xml中的一个节点
+  // 本质上是一个包装类对原来的org.w3c.dom.Node进行了一层包装，做了能力增强
   private final Node node;
   // 节点名
   private final String name;
@@ -45,7 +46,9 @@ public class XNode {
   private final XPathParser xpathParser;
 
   public XNode(XPathParser xpathParser, Node node, Properties variables) {
+    // 包内的xpathParser解析器工具
     this.xpathParser = xpathParser;
+    // 包内的Node节点
     this.node = node;
     this.name = node.getNodeName();
     this.variables = variables;
@@ -354,11 +357,14 @@ public class XNode {
   }
 
   private Properties parseAttributes(Node n) {
+    // 构建Properties对象
     Properties attributes = new Properties();
     NamedNodeMap attributeNodes = n.getAttributes();
+    // 遍历属性节点
     if (attributeNodes != null) {
       for (int i = 0; i < attributeNodes.getLength(); i++) {
         Node attribute = attributeNodes.item(i);
+        // 进行属性解析
         String value = PropertyParser.parse(attribute.getNodeValue(), variables);
         attributes.put(attribute.getNodeName(), value);
       }
@@ -367,6 +373,7 @@ public class XNode {
   }
 
   private String parseBody(Node node) {
+    // 解析节点体
     String data = getBodyData(node);
     if (data == null) {
       NodeList children = node.getChildNodes();

@@ -22,6 +22,7 @@ import org.apache.ibatis.reflection.Reflector;
 /**
  * @author Clinton Begin
  * 属性拷贝器
+ * 我理解这个是不是有点儿类似原型模式的实现
  */
 public final class PropertyCopier {
 
@@ -41,7 +42,7 @@ public final class PropertyCopier {
     while (parent != null) {
       // 获取该类的所有属性
       final Field[] fields = parent.getDeclaredFields();
-      // 循环遍历属性进行拷贝
+      // 循环遍历属性进行拷贝 - 深拷贝
       for (Field field : fields) {
         try {
           try {

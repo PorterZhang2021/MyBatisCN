@@ -36,9 +36,9 @@ public class SetFieldInvoker implements Invoker {
       // 直接给属性赋值就可以
       field.set(target, args[0]);
     } catch (IllegalAccessException e) {
-      if (Reflector.canControlMemberAccessible()) {
-        field.setAccessible(true);
-        field.set(target, args[0]);
+      if (Reflector.canControlMemberAccessible()) { // 如果属性的访问性可以修改
+        field.setAccessible(true); // 将属性的可访问性修改为可访问
+        field.set(target, args[0]); // 再次给属性赋值
       } else {
         throw e;
       }

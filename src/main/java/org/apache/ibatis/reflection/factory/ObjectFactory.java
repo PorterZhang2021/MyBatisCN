@@ -33,10 +33,13 @@ public interface ObjectFactory {
    */
   default void setProperties(Properties properties) {
     // NOP
+    // 本身是一个接口，所以支持默认实现方法，这里看着默认实现应该是空操作
   }
 
   /**
-   * 创建一个无参构造的类型实例
+   * 创建一个无参构造的类型实例，这里传入的是一个Class<T>类型，
+   * 这里Class表明的是可以用相关的反射操作，而这个T则是需要
+   * 构建的对象类型。
    * Creates a new object with default constructor.
    * @param type Object type
    * @return
@@ -54,6 +57,7 @@ public interface ObjectFactory {
   <T> T create(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs);
 
   /**
+   * 这里单独对集合类型有一个判断，为啥需要这个并且写在接口层面还有待观察
    * Returns true if this object can have a set of other objects.
    * It's main purpose is to support non-java.util.Collection objects like Scala collections.
    *

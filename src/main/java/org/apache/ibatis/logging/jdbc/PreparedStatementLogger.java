@@ -47,6 +47,9 @@ public final class PreparedStatementLogger extends BaseJdbcLogger implements Inv
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, params);
       }
+      // 这部分其实就是对应PreparedStatement接口里的方法，比如setXXX方法，executeQuery方法等
+      // 对它们通过log进行一层包裹，而这里包裹用的log本质上是用了Log接口，而Log接口适配了不同的
+      // 日志实现，比如Slf4jImpl，Log4jImpl等，也就让最后能够完成对其日志的打印了
       if (EXECUTE_METHODS.contains(method.getName())) {
         if (isDebugEnabled()) {
           debug("Parameters: " + getParameterValueString(), true);

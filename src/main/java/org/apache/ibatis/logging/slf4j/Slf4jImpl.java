@@ -31,6 +31,7 @@ public class Slf4jImpl implements Log {
   private Log log;
 
   public Slf4jImpl(String clazz) {
+    // 从工厂中获取对应的logger实例
     Logger logger = LoggerFactory.getLogger(clazz);
 
     if (logger instanceof LocationAwareLogger) {

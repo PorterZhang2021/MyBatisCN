@@ -36,10 +36,12 @@ public class MethodInvoker implements Invoker {
   public MethodInvoker(Method method) {
     this.method = method;
 
+    // 这里传入的是方法的参数类型，如果只有一个入参，则返回入参类型，否则返回出参类型
     if (method.getParameterTypes().length == 1) {
       // 有且只有一个入参时，这里放入入参
       type = method.getParameterTypes()[0];
     } else {
+      // 否则是出参
       type = method.getReturnType();
     }
   }
@@ -48,6 +50,7 @@ public class MethodInvoker implements Invoker {
   @Override
   public Object invoke(Object target, Object[] args) throws IllegalAccessException, InvocationTargetException {
     try {
+      // 反射执行，这里传入的args是反射执行时传入的参数
       return method.invoke(target, args);
     } catch (IllegalAccessException e) {
       if (Reflector.canControlMemberAccessible()) {
@@ -61,6 +64,7 @@ public class MethodInvoker implements Invoker {
 
   @Override
   public Class<?> getType() {
+    // 这里可能会返回方法的入参类型或者返回类型
     return type;
   }
 }

@@ -27,6 +27,8 @@ import java.util.Iterator;
  * 则各个属性得到以下结果
  *
  * 该属性标记器只能处理一级，即点后面的都作为children
+ *
+ * 本身情况下这个还是一个迭代器，可以迭代出下一级属性
  */
 public class PropertyTokenizer implements Iterator<PropertyTokenizer> {
 
@@ -40,18 +42,25 @@ public class PropertyTokenizer implements Iterator<PropertyTokenizer> {
   private final String children;
 
   public PropertyTokenizer(String fullname) {
+    // student[sId].name 按 . 分割
     int delim = fullname.indexOf('.');
     if (delim > -1) {
+      // student[sId]
       name = fullname.substring(0, delim);
+      // name
       children = fullname.substring(delim + 1);
     } else {
+      // student[sId] 没有 .
       name = fullname;
       children = null;
     }
     indexedName = name;
+    // 找到[] 符号
     delim = name.indexOf('[');
     if (delim > -1) {
+      // sId
       index = name.substring(delim + 1, name.length() - 1);
+      // student
       name = name.substring(0, delim);
     }
   }

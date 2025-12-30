@@ -139,6 +139,7 @@ public class XMLMapperBuilder extends BaseBuilder {
       if (namespace == null || namespace.equals("")) {
         throw new BuilderException("Mapper's namespace cannot be empty");
       }
+      // 设置当前的命名空间
       builderAssistant.setCurrentNamespace(namespace);
       // mapper文件中其他配置节点的解析
       cacheRefElement(context.evalNode("cache-ref"));
@@ -153,6 +154,7 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  // 处理各个数据库操作语句
   private void buildStatementFromContext(List<XNode> list) {
     if (configuration.getDatabaseId() != null) {
       buildStatementFromContext(list, configuration.getDatabaseId());
@@ -364,6 +366,14 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 处理构建Discriminator
+   * @param context
+   * @param resultType
+   * @param resultMappings
+   * @return
+   * @throws Exception
+   */
   private Discriminator processDiscriminatorElement(XNode context, Class<?> resultType, List<ResultMapping> resultMappings) throws Exception {
     String column = context.getStringAttribute("column");
     String javaType = context.getStringAttribute("javaType");

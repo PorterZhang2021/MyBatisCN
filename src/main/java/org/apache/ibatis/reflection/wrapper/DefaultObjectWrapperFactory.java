@@ -20,6 +20,7 @@ import org.apache.ibatis.reflection.ReflectionException;
 
 /**
  * @author Clinton Begin
+ * 默认实现看着好像是默认返回false，并不去操作，但是看着这个好像只会抛出异常
  */
 public class DefaultObjectWrapperFactory implements ObjectWrapperFactory {
 

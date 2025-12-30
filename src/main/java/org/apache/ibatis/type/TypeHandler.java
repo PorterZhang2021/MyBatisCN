@@ -25,15 +25,21 @@ import java.sql.SQLException;
  */
 public interface TypeHandler<T> {
 
+  // 该部分就是设置对应的参数值，给定的值
   void setParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException;
 
   /**
    * @param columnName Colunm name, when configuration <code>useColumnLabel</code> is <code>false</code>
+   * 获取计算结果
    */
+  // 这个是通过列名的方式获取结果值
   T getResult(ResultSet rs, String columnName) throws SQLException;
 
+  // 这个是通过列索引的方式获取结果值
   T getResult(ResultSet rs, int columnIndex) throws SQLException;
 
+  // 这个是通过列索引的方式获取结果值
+  // todo 为什么这里用了CallableStatement？
   T getResult(CallableStatement cs, int columnIndex) throws SQLException;
 
 }

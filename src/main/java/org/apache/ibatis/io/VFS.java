@@ -31,11 +31,19 @@ import org.apache.ibatis.logging.LogFactory;
  * Provides a very simple API for accessing resources within an application server.
  *
  * @author Ben Gunter
+ *
+ * VFS(Virtual File System) 虚拟文件系统，通过这个虚拟文件系统，屏蔽了底层的不同的磁盘文件系统的差异
+ * 比如说FAT，VFAT，NFS，NTFS等内容，使得上层软件能够用单一的方式来跟底层不同的文件系统沟通
+ *
+ * 这里需要说明的是看着用了适配器，如果后续我想要做替换，那么只需要替换掉对应的实现类就行了，不会影响内部的使用逻辑
  */
 public abstract class VFS {
   private static final Log log = LogFactory.getLog(VFS.class);
 
-  /** The built-in implementations. */
+  /**
+   * The built-in implementations.
+   * 对应的两个类，这里使用的是单例模式
+   * */
   public static final Class<?>[] IMPLEMENTATIONS = { JBoss6VFS.class, DefaultVFS.class };
 
   /** The list to which implementations are added by {@link #addImplClass(Class)}. */

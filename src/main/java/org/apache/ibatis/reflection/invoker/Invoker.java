@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author Clinton Begin
+ * 用于反射方法调用器，对应的实现支持操作Method以及Field的get和set
  */
 public interface Invoker {
   // 方法执行调用器

@@ -24,9 +24,11 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
  * @author Clinton Begin
+ * 集合包装器，用于包装集合对象
  */
 public class CollectionWrapper implements ObjectWrapper {
 
+  // 这里是利用统一的Collection接口包裹了所有的集合对象
   private final Collection<Object> object;
 
   public CollectionWrapper(MetaObject metaObject, Collection<Object> object) {
@@ -35,51 +37,61 @@ public class CollectionWrapper implements ObjectWrapper {
 
   @Override
   public Object get(PropertyTokenizer prop) {
+    // 集合情况下，看着这个方法不支持
     throw new UnsupportedOperationException();
   }
 
   @Override
   public void set(PropertyTokenizer prop, Object value) {
+    // 集合情况下，看着这个方法不支持
     throw new UnsupportedOperationException();
   }
 
   @Override
   public String findProperty(String name, boolean useCamelCaseMapping) {
+    // 集合情况下，看着这个方法不支持
     throw new UnsupportedOperationException();
   }
 
   @Override
   public String[] getGetterNames() {
+    // 集合情况下，看着这个方法不支持
     throw new UnsupportedOperationException();
   }
 
   @Override
   public String[] getSetterNames() {
+    // 集合情况下，看着这个方法不支持
     throw new UnsupportedOperationException();
   }
 
   @Override
   public Class<?> getSetterType(String name) {
+    // 集合情况下，看着这个方法不支持
     throw new UnsupportedOperationException();
   }
 
   @Override
   public Class<?> getGetterType(String name) {
+    // 集合情况下，看着这个方法不支持
     throw new UnsupportedOperationException();
   }
 
   @Override
   public boolean hasSetter(String name) {
+    // 集合情况下，看着这个方法不支持
     throw new UnsupportedOperationException();
   }
 
   @Override
   public boolean hasGetter(String name) {
+    // 集合情况下，看着这个方法不支持
     throw new UnsupportedOperationException();
   }
 
   @Override
   public MetaObject instantiatePropertyValue(String name, PropertyTokenizer prop, ObjectFactory objectFactory) {
+    // 集合情况下，看着这个方法不支持
     throw new UnsupportedOperationException();
   }
 
@@ -90,11 +102,13 @@ public class CollectionWrapper implements ObjectWrapper {
 
   @Override
   public void add(Object element) {
+    // 添加元素
     object.add(element);
   }
 
   @Override
   public <E> void addAll(List<E> element) {
+    // 添加全部元素
     object.addAll(element);
   }
 

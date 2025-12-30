@@ -80,6 +80,7 @@ public abstract class BaseBuilder {
       return null;
     }
     try {
+      // 转换成对应的枚举类型
       return JdbcType.valueOf(alias);
     } catch (IllegalArgumentException e) {
       throw new BuilderException("Error resolving JdbcType. Cause: " + e, e);
@@ -93,6 +94,7 @@ public abstract class BaseBuilder {
       return null;
     }
     try {
+      //  传入对应的类型
       return ResultSetType.valueOf(alias);
     } catch (IllegalArgumentException e) {
       throw new BuilderException("Error resolving ResultSetType. Cause: " + e, e);
@@ -168,6 +170,7 @@ public abstract class BaseBuilder {
     TypeHandler<?> handler = typeHandlerRegistry.getMappingTypeHandler(typeHandlerType);
     if (handler == null) {
       // not in registry, create a new one
+      // 创建新的实例
       handler = typeHandlerRegistry.getInstance(javaType, typeHandlerType);
     }
     return handler;

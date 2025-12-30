@@ -17,6 +17,7 @@ package org.apache.ibatis.exceptions;
 
 /**
  * @author Clinton Begin
+ * 这里的标记主要是为了忽略之前IbatisException的弃用标记
  */
 @SuppressWarnings("deprecation")
 public class PersistenceException extends IbatisException {
