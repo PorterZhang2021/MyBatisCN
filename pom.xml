@@ -40,10 +40,107 @@
 
   <modules>
     <module>mybatis-core</module>
+    <module>SqlSessionFactoryDemo</module>
   </modules>
 
   <properties>
     <module.name>org.mybatis</module.name>
+    <junit-jupiter.version>5.10.0</junit-jupiter.version>
+    <h2.version>2.2.224</h2.version>
+    <mybatis.version>3.5.2</mybatis.version>
+
+    <!-- Java 17 compatibility -->
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Disable animal-sniffer plugin for Java 17 compatibility -->
+    <animal.sniffer.skip>true</animal.sniffer.skip>
+    <!-- Modernizer configuration -->
+    <modernizer.skip>false</modernizer.skip>
+    <modernizer.java.version>17</modernizer.java.version>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- MyBatis 3.5.2 -->
+      <dependency>
+        <groupId>org.mybatis</groupId>
+        <artifactId>mybatis</artifactId>
+        <version>${mybatis.version}</version>
+      </dependency>
+      <!-- H2 内存数据库 -->
+      <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <version>${h2.version}</version>
+      </dependency>
+      <!-- JUnit 5 -->
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>${junit-jupiter.version}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!-- OSGi bundle plugin configuration with skip option -->
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>5.1.8</version>
+          <extensions>true</extensions>
+          <configuration>
+            <skip>${maven.bundle.skip}</skip>
+            <instructions>
+              <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+              <Bundle-Name>${project.name}</Bundle-Name>
+              <Bundle-Version>${project.version}</Bundle-Version>
+              <Export-Package>${osgi.export}</Export-Package>
+              <Import-Package>${osgi.import}</Import-Package>
+              <DynamicImport-Package>${osgi.dynamicImport}</DynamicImport-Package>
+              <_removeheaders>Bnd-LastModified,Build-Jdk,Built-By,Created-By</_removeheaders>
+            </instructions>
+          </configuration>
+          <executions>
+            <execution>
+              <id>bundle-manifest</id>
+              <phase>process-classes</phase>
+              <goals>
+                <goal>manifest</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <!-- Explicitly disable maven-bundle-plugin for all submodules to prevent ConcurrentModificationException -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>5.1.8</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+
+      <!-- Configure modernizer for Java 17 -->
+      <plugin>
+        <groupId>org.gaul</groupId>
+        <artifactId>modernizer-maven-plugin</artifactId>
+        <version>1.7.1</version>
+        <configuration>
+          <skip>${modernizer.skip}</skip>
+          <javaVersion>${modernizer.java.version}</javaVersion>
+          <failOnViolations>false</failOnViolations>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

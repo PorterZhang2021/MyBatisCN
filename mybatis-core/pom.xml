@@ -43,6 +43,9 @@
     <spotbugs.onlyAnalyze>org.apache.ibatis.*</spotbugs.onlyAnalyze>
     <jacoco.version>0.8.4</jacoco.version>
 
+    <!-- Bundle plugin configuration -->
+    <maven.bundle.skip>false</maven.bundle.skip>
+
     <!-- Dependency versions -->
     <ognl.version>3.2.10</ognl.version>
     <javassist.version>3.24.1-GA</javassist.version>
@@ -227,6 +230,16 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <!-- Explicitly enable maven-bundle-plugin for mybatis-core module -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <skip>${maven.bundle.skip}</skip>
+        </configuration>
+      </plugin>
+    </plugins>
     <resources>
       <resource>
         <directory>${project.basedir}/..</directory>
