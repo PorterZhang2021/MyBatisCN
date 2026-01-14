@@ -162,6 +162,7 @@ public class XMLMapperBuilder extends BaseBuilder {
 
   private void buildStatementFromContext(List<XNode> list, String requiredDatabaseId) {
     for (XNode context : list) {
+      // 2026-01-14 - Q1 - 7 - 解析Mapper文件中的语句
       // 单条语句的解析器，解析类似：
       // <select id="selectUser" resultType="com.example.demo.UserBean">
       //    select * from `user` where id = #{id}

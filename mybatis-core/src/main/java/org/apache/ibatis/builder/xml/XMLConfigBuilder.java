@@ -86,6 +86,7 @@ public class XMLConfigBuilder extends BaseBuilder {
   }
 
   private XMLConfigBuilder(XPathParser parser, String environment, Properties props) {
+    // Q1 - 2026-01-14 - 创建Configuration对象, 可以发现这里是直接new了一个新的对象
     super(new Configuration());
     ErrorContext.instance().resource("SQL Mapper Configuration");
     this.configuration.setVariables(props);
@@ -105,6 +106,7 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
     parsed = true;
     // 从根节点开展解析
+    // Q1 - 2026-01-14 - 4 - 解析根节点configuration
     parseConfiguration(parser.evalNode("/configuration"));
     return configuration;
   }
@@ -128,9 +130,11 @@ public class XMLConfigBuilder extends BaseBuilder {
       reflectorFactoryElement(root.evalNode("reflectorFactory"));
       settingsElement(settings);
       // read it after objectFactory and objectWrapperFactory issue #631
+      // Q1 - 20250114 - 5 - 这个environments可以配置多个环境，但只能使用一个环境
       environmentsElement(root.evalNode("environments"));
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
       typeHandlerElement(root.evalNode("typeHandlers"));
+      // Q1 - 20250114 - 6 - 解析mappers节点， 这里比较重要涉及到将xml文件中的sql语句映射到接口方法上
       mapperElement(root.evalNode("mappers"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);

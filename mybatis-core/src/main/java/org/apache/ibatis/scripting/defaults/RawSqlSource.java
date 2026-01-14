@@ -44,7 +44,7 @@ public class RawSqlSource implements SqlSource {
   public RawSqlSource(Configuration configuration, String sql, Class<?> parameterType) {
     SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(configuration);
     Class<?> clazz = parameterType == null ? Object.class : parameterType;
-    // 处理RawSqlSource中的“#{}”占位符，得到StaticSqlSource
+    // 2026-01-14 - Q1 - 10 - 处理RawSqlSource中的“#{}”占位符，得到StaticSqlSource
     sqlSource = sqlSourceParser.parse(sql, clazz, new HashMap<>());
   }
 

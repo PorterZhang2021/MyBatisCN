@@ -109,6 +109,7 @@ public class XMLStatementBuilder extends BaseBuilder {
     }
 
     // 读取各个配置属性
+    // 2026-01-14 - Q1 - 11 - SQL语句解析，比较重要部分
     SqlSource sqlSource = langDriver.createSqlSource(configuration, context, parameterTypeClass);
     StatementType statementType = StatementType.valueOf(context.getStringAttribute("statementType", StatementType.PREPARED.toString()));
     Integer fetchSize = context.getIntAttribute("fetchSize");
@@ -126,6 +127,7 @@ public class XMLStatementBuilder extends BaseBuilder {
     String keyColumn = context.getStringAttribute("keyColumn");
     String resultSets = context.getStringAttribute("resultSets");
     // 在MapperBuilderAssistant的帮助下创建MappedStatement对象，并写入到Configuration中
+    // 2026-01-14 - Q1 - 12 - 创建MappedStatement对象，并写入到Configuration中
     builderAssistant.addMappedStatement(id, sqlSource, statementType, sqlCommandType,
         fetchSize, timeout, parameterMap, parameterTypeClass, resultMap, resultTypeClass,
         resultSetTypeEnum, flushCache, useCache, resultOrdered,

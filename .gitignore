@@ -8,10 +8,12 @@
 /.settings
 /nb*
 /release.properties
-/target
+*/target
 
 # These are needed if running in IDE without properties set
 /ibderby
 derby.log
 /bin/
 .mvn/wrapper/maven-wrapper.jar
+*.iml
+.DS_Store
