@@ -40,7 +40,6 @@
 
   <modules>
     <module>mybatis-core</module>
-    <module>SqlSessionFactoryDemo</module>
   </modules>
 
   <properties>

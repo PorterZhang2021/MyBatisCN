@@ -15,3 +15,9 @@
 derby.log
 /bin/
 .mvn/wrapper/maven-wrapper.jar
+
+*/target
+
+# These are needed if running in IDE without properties set
+*.iml
+.DS_Store
